@@ -2,11 +2,10 @@
 
 # Configure the Amplify project for automatic deployments
 function configure_amplify_deployments() {
-
-  local amplify_service_role_arn='arn:aws:iam::774519591432:role/amplifyconsole-backend-role'
-
   local app_id
   local domain_name
+
+  local amplify_service_role_arn='arn:aws:iam::774519591432:role/amplifyconsole-backend-role'
 
   # Get the domain name for the current repository
   domain_name="${domain_associations[$repo_index]}"
@@ -37,7 +36,7 @@ function configure_amplify_deployments() {
     check_command git push -u origin dev
 
     # Update Amplify app
-    aws amplify update-app --app-id "$app_id" \
+    check_command aws amplify update-app --app-id "$app_id" \
       --name "$name" \
       --iam-service-role-arn "$amplify_service_role_arn" \
       --repository "https://git-codecommit.${region}.amazonaws.com/v1/repos/${name}" \
@@ -79,7 +78,7 @@ function configure_amplify_deployments() {
   fi
 
   # Add a backend environment
-  if does_environment_exist "$app_id" "dev"; then
+  if does_environment_exist "dev"; then
     echo "Environment 'dev' already exists in app '$name'. Skipping environment creation."
   else
     check_command aws amplify create-backend-environment \

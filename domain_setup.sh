@@ -23,5 +23,5 @@ domain_setup() {
   certificate_arn=$(request_certificate)
 
   # Add and verify the CNAME record for domain ownership
-  add_and_verify_cname_record "$certificate_arn" "$domain_name"
+  add_and_verify_cname_record "$certificate_arn"
 }

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Main setup function
 function main() {
 
@@ -38,10 +39,8 @@ function main() {
 
   source create_webhook_if_not_exists.sh
 
-  local repositories
-
   # Define the repository names and descriptions
-  repositories=(
+  local repositories=(
     'idsystemsmarketing:Marketing repository'
     'idsystemsdocs:Documentation repository'
   )
@@ -67,14 +66,14 @@ function main() {
     name=$(echo "${repositories[$repo_index]}" | cut -d':' -f1)
     description=$(echo "${repositories[$repo_index]}" | cut -d':' -f2)
 
-    if aws codecommit get-repository --repository-name "$name" >/dev/null 2>&1; then
+    if aws codecommit get-repository --repository-name "$name"; then
       echo "Repository '$name' already exists. Skipping creation."
     else
       # Create the repository
       if ! check_command aws codecommit create-repository \
         --repository-name "$name" \
         --repository-description "$description" \
-        --region ap-southeast-2 \
+        --region "$region" \
         --no-cli-pager; then
         echo "Failed to create repo, exiting"
         exit 1

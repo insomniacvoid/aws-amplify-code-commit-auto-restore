@@ -3,7 +3,6 @@
 # Check if a webhook for the given branch already exists
 check_webhook_exists() {
   local existing_webhook
-
   local app_id="$1"
   local branch_name="$2"
 

@@ -4,9 +4,6 @@
 update_dns_settings() {
   local dns_records
 
-  app_id=$1
-  domain_name=$2
-
   # Get the DNS records from the created domain association
   dns_records=$(aws amplify get-domain-association \
     --app-id "$app_id" \

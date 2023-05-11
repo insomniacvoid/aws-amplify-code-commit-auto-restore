@@ -7,10 +7,7 @@ does_branch_exist() {
   local existing_branch
   local branch_names
 
-  app_id=$1
-  shift
   branch_names=("$@")
-
   existing_branches=""
 
   for branch_name in "${branch_names[@]}"; do

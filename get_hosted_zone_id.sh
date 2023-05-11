@@ -2,7 +2,6 @@
 
 # Handle hosted zone retrieval
 get_hosted_zone_id() {
-  domain_name="$1"
 
   hosted_zone_id=$(aws route53 list-hosted-zones-by-name \
     --dns-name "$domain_name" \

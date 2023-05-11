@@ -24,7 +24,7 @@ add_and_verify_cname_record() {
   cname_value=$(echo "$validation_record" | jq -r '.Value')
 
   # Get the hosted zone ID
-  hosted_zone_id=$(get_hosted_zone_id "$domain_name")
+  hosted_zone_id=$(get_hosted_zone_id)
 
   echo "Adding CNAME record to Route 53"
 
@@ -57,7 +57,6 @@ add_and_verify_cname_record() {
 
   while [ "$existing_cname" != "$cname_value" ] && [ $propagation_check_count -lt $propagation_check_limit ]; do
     sleep 10
-
     # Verify that the CNAME record exists in Route 53
     existing_cname=$(aws route53 list-resource-record-sets \
       --hosted-zone-id "$hosted_zone_id" \

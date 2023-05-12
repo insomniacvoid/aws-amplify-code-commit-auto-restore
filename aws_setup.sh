@@ -7,6 +7,10 @@ function main() {
   # Source DNS functionality
   source domain_setup.sh
 
+  source create_dnssec_policy_json.sh
+
+  source setup_dnssec.sh
+
   source request_certificate.sh
 
   source remove_domain_association.sh

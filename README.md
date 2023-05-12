@@ -2,9 +2,10 @@
 ## Quickstart
 ### This script assumes you have already configured Access Keys/AWS CLI and have the correct libraries installed.
 chmod +x aws_setup.sh
+
 ./aws_setup.sh
 
-##### Rebuilding the project (no automatic code-cleanup)
+### Rebuilding the project (no automatic code-cleanup)
 rm -rf idsystems* ; ./aws_setup.sh
 
 *Where idsystems** *etc. are the old project directories*

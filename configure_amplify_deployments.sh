@@ -4,8 +4,9 @@
 function configure_amplify_deployments() {
   local app_id
   local domain_name
-  local amplify_service_role_arn='arn:aws:iam::774519591432:role/amplifyconsole-backend-role'
   local user_choice
+  local env_name
+  local amplify_service_role_arn='arn:aws:iam::774519591432:role/amplifyconsole-backend-role'
 
   # Get the domain name for the current repository
   domain_name="${domain_associations[$repo_index]}"
@@ -13,9 +14,12 @@ function configure_amplify_deployments() {
   # Check if the Amplify app exists
   app_id=$(get_app_id)
 
+  # Generate a unique environment name conforming to the 10 char lowercase limit imposed by Amplify
+  env_name=$(uuidgen | tr -dc 'a-z' | fold -w 9 | head -n 1)
+
   if [[ -z "$app_id" ]]; then
     # Initialize existing Amplify app
-    amplify init --yes
+    amplify init --yes --envName "$env_name"
 
     echo "Amplify app '$name' finished initializing."
 
@@ -44,9 +48,10 @@ function configure_amplify_deployments() {
       --environment-variables '{"_LIVE_UPDATES": "[{\"name\":\"Amplify CLI\",\"pkg\":\"@aws-amplify/cli\",\"type\":\"npm\",\"version\":\"latest\"}]"}' \
       --no-cli-pager
 
+    # Pull to sync updates
     if ! [ -f "./amplify/.config/local-env-info.json" ]; then
       echo "local-env-info.json does not exist. Pulling Amplify environment..."
-      amplify pull --appId "$app_id" --envName dev --yes
+      amplify pull --appId "$app_id" --envName "$env_name" --yes
     fi
 
     echo "Amplify app '$name' updated."
@@ -83,12 +88,12 @@ function configure_amplify_deployments() {
   fi
 
   # Add a backend environment
-  if does_environment_exist "dev"; then
-    echo "Environment 'dev' already exists in app '$name'. Skipping environment creation."
+  if does_environment_exist "$env_name"; then
+    echo "Environment '$env_name' already exists in app '$name'. Skipping environment creation."
   else
     check_command aws amplify create-backend-environment \
       --app-id "$app_id" \
-      --environment-name dev
+      --environment-name "$env_name"
   fi
 
   echo "Would you like to configure DNS for $name? Y/n"

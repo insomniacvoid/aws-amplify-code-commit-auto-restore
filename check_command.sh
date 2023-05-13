@@ -6,6 +6,6 @@ check_command() {
     echo "Error: Failed to execute command: $*"
     exit 1
   else
-    echo "$* passed error checking"
+    echo "$(echo "$*" | awk '{print $1, $2, $3}' ) : passed error check"
   fi
 }

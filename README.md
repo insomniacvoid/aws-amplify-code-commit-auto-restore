@@ -32,3 +32,8 @@ source_account="222222222222"
 [2] https://github.com/aws-amplify/amplify-cli/blob/main/packages/amplify-headless-interface/schemas/auth/2/AddAuthRequest.schema.json
 
 [3] https://github.com/aws-amplify/amplify-cli/blob/main/packages/amplify-headless-interface/src/interface/auth/add.ts
+
+### *Issues*
+
+##### Missing config\local-env-info.json error (requires amplify pull)
+[1] https://github.com/aws-amplify/amplify-cli/issues/11245

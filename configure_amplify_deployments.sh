@@ -4,8 +4,8 @@
 function configure_amplify_deployments() {
   local app_id
   local domain_name
-
   local amplify_service_role_arn='arn:aws:iam::774519591432:role/amplifyconsole-backend-role'
+  local user_choice
 
   # Get the domain name for the current repository
   domain_name="${domain_associations[$repo_index]}"
@@ -24,7 +24,7 @@ function configure_amplify_deployments() {
 
     # Stage and commit the changes
     check_command git add .
-    check_command git commit -m "Initial setup (React/Amplify) commit"
+    check_command git commit -m "Automated setup (React/Amplify) commit"
 
     # Push the changes to the CodeCommit repository
     check_command git push origin master
@@ -43,6 +43,11 @@ function configure_amplify_deployments() {
       --build-spec file://amplify.yml \
       --environment-variables '{"_LIVE_UPDATES": "[{\"name\":\"Amplify CLI\",\"pkg\":\"@aws-amplify/cli\",\"type\":\"npm\",\"version\":\"latest\"}]"}' \
       --no-cli-pager
+
+    if ! [ -f "./amplify/.config/local-env-info.json" ]; then
+      echo "local-env-info.json does not exist. Pulling Amplify environment..."
+      amplify pull --appId "$app_id" --envName dev --yes
+    fi
 
     echo "Amplify app '$name' updated."
   fi
@@ -86,16 +91,31 @@ function configure_amplify_deployments() {
       --environment-name dev
   fi
 
-  # Run domain setup
-  domain_setup
+  echo "Would you like to configure DNS for $name? Y/n"
+  read -r user_choice
 
-  # Run webhook setup
-  create_webhook_if_not_exists "$app_id" "master" "build-master"
-  create_webhook_if_not_exists "$app_id" "dev" "build-dev"
+  if [[ "$user_choice" == "yes" || "$user_choice" == "y" || "$user_choice" == "Y" ]]; then
+    # Run domain setup
+    domain_setup
+  else
+    echo "Skipping DNS setup for $name."
+  fi
 
-  # Trigger build
-  run_webhooks "$app_id" "master"
-  run_webhooks "$app_id" "dev"
+  echo "Would you like to create webhooks for $name? Y/n"
+  read -r user_choice
+
+  if [[ "$user_choice" == "yes" || "$user_choice" == "y" || "$user_choice" == "Y" ]]; then
+    # Run webhook setup
+    create_webhook_if_not_exists "$app_id" "master" "build-master"
+    create_webhook_if_not_exists "$app_id" "dev" "build-dev"
+
+    # Trigger build
+    run_webhooks "$app_id" "master"
+    run_webhooks "$app_id" "dev"
+
+  else
+    echo "Skipping webhook setup for $name."
+  fi
 
   # Push the changes to the CodeCommit repository
   check_command git push origin master

@@ -5,5 +5,7 @@ check_command() {
   if ! "$@"; then
     echo "Error: Failed to execute command: $*"
     exit 1
+  else
+    echo "$* passed error checking"
   fi
 }
